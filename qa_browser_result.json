@@ -1,0 +1,128 @@
+{
+  "passed": 30,
+  "total": 30,
+  "tests": [
+    {
+      "name": "Inicialização do JavaScript",
+      "passed": true
+    },
+    {
+      "name": "24 missões",
+      "passed": true
+    },
+    {
+      "name": "2400 questões",
+      "passed": true
+    },
+    {
+      "name": "66 conceitos",
+      "passed": true
+    },
+    {
+      "name": "Logomarca incorporada e carregada",
+      "passed": true
+    },
+    {
+      "name": "Contrato exigido na abertura",
+      "passed": true
+    },
+    {
+      "name": "Sem aceite, botão inativo",
+      "passed": true
+    },
+    {
+      "name": "Aceite local realizado",
+      "passed": true
+    },
+    {
+      "name": "Fonte ampliada",
+      "passed": true
+    },
+    {
+      "name": "Alto contraste",
+      "passed": true
+    },
+    {
+      "name": "Menu contém 24 missões",
+      "passed": true
+    },
+    {
+      "name": "Questão inicial com 4 alternativas",
+      "passed": true
+    },
+    {
+      "name": "Plano sem dados informa limitação",
+      "passed": true
+    },
+    {
+      "name": "Correção comentada exibida",
+      "passed": true
+    },
+    {
+      "name": "Tutor tem dados para plano",
+      "passed": true
+    },
+    {
+      "name": "Próxima questão",
+      "passed": true
+    },
+    {
+      "name": "Tutor explica dificuldades",
+      "passed": true
+    },
+    {
+      "name": "Tutor resolve multiplicação",
+      "passed": true
+    },
+    {
+      "name": "Tutor resolve MMC",
+      "passed": true
+    },
+    {
+      "name": "Tutor calcula perímetro",
+      "passed": true
+    },
+    {
+      "name": "Laboratório visual recalcula",
+      "passed": true
+    },
+    {
+      "name": "Novas missões navegáveis",
+      "passed": true
+    },
+    {
+      "name": "Busca de conceitos",
+      "passed": true
+    },
+    {
+      "name": "Política V3 visível",
+      "passed": true
+    },
+    {
+      "name": "Salvar progresso ativado",
+      "passed": true
+    },
+    {
+      "name": "Exportação de progresso disponível",
+      "passed": true
+    },
+    {
+      "name": "Sem erros JS no desktop",
+      "passed": true
+    },
+    {
+      "name": "Mobile sem corte horizontal",
+      "passed": true
+    },
+    {
+      "name": "Menu móvel",
+      "passed": true
+    },
+    {
+      "name": "Sem erros JS no mobile",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "environment": "Chromium automated with Playwright; HTML inserted directly into page; localStorage shim in memory; file:// blocked by administrator"
+}

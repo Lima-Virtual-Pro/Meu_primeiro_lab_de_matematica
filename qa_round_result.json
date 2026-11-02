@@ -1,0 +1,58 @@
+{
+  "passed": 13,
+  "total": 13,
+  "tests": [
+    {
+      "name": "Rodada de 10 respostas completas",
+      "passed": true
+    },
+    {
+      "name": "Missão marcada como concluída",
+      "passed": true
+    },
+    {
+      "name": "10 respostas contabilizadas",
+      "passed": true
+    },
+    {
+      "name": "Persistência opt-in em localStorage",
+      "passed": true
+    },
+    {
+      "name": "Exportação JSON versão 3 válida",
+      "passed": true
+    },
+    {
+      "name": "Reiniciar apaga conquistas e métricas",
+      "passed": true
+    },
+    {
+      "name": "Reiniciar limpa armazenamento antigo e atual",
+      "passed": true
+    },
+    {
+      "name": "Importação JSON recupera a conclusão",
+      "passed": true
+    },
+    {
+      "name": "Importação recupera métricas matemáticas",
+      "passed": true
+    },
+    {
+      "name": "Importação respeita opt-in de salvamento",
+      "passed": true
+    },
+    {
+      "name": "Salvamento após importação",
+      "passed": true
+    },
+    {
+      "name": "Reabertura simulada recupera o progresso",
+      "passed": true
+    },
+    {
+      "name": "Aceite v3 mantido na reabertura simulada",
+      "passed": true
+    }
+  ]
+}

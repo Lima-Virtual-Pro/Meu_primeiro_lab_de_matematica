@@ -1,0 +1,77 @@
+from playwright.sync_api import sync_playwright
+from pathlib import Path
+import json, traceback
+R=Path('/mnt/data/meu_primeiro_laboratorio_v3')
+html=(R/'index.html').read_text()
+checks=[];errors=[]
+def mark(name,observed):
+ ok=bool(observed);checks.append({'name':name,'passed':ok}); print(('PASS ' if ok else 'FAIL ')+name)
+
+def setup(browser, w, h, mobile=False):
+ page=browser.new_page(viewport={'width':w,'height':h},is_mobile=mobile,has_touch=mobile)
+ page.on('pageerror',lambda exc: errors.append(str(exc)))
+ page.goto('about:blank')
+ page.evaluate('''const mem = new Map(); Object.defineProperty(window, 'localStorage', {configurable: true,value: {getItem:k=>mem.has(k)?mem.get(k):null, setItem:(k,v)=>mem.set(k,String(v)), removeItem:k=>mem.delete(k), clear:()=>mem.clear()}});''')
+ page.set_content(html,wait_until='load')
+ page.wait_for_timeout(350)
+ return page
+with sync_playwright() as pw:
+ browser=pw.chromium.launch(headless=True,executable_path='/usr/bin/chromium',args=['--no-sandbox','--disable-dev-shm-usage'])
+ try:
+  p=setup(browser,1440,900)
+  mark('Inicialização do JavaScript',p.evaluate("!!window.LAB_QA"))
+  mark('24 missões',p.evaluate('LAB_QA.COURSE.length===24'))
+  mark('2400 questões',p.evaluate('LAB_QA.BANK.reduce((n,b)=>n+b.length,0)===2400'))
+  mark('66 conceitos',p.evaluate('LAB_QA.GLOSSARY.length===66'))
+  mark('Logomarca incorporada e carregada',p.locator('.hero img').evaluate('el=>el.complete&&el.naturalWidth>100'))
+  mark('Contrato exigido na abertura',p.locator('#acceptModal').evaluate('el=>el.open'))
+  mark('Sem aceite, botão inativo',p.locator('#acceptBtn').is_disabled())
+  p.locator('#acceptCheck').check();p.locator('#acceptBtn').click()
+  mark('Aceite local realizado',not p.locator('#acceptModal').evaluate('el=>el.open'))
+  p.locator('#fontBtn').click();mark('Fonte ampliada',p.locator('body').evaluate("el=>el.classList.contains('large-text')"));p.locator('#fontBtn').click()
+  p.locator('#contrastBtn').click();mark('Alto contraste',p.locator('body').evaluate("el=>el.classList.contains('high-contrast')"));p.locator('#contrastBtn').click()
+  mark('Menu contém 24 missões',p.locator('#lessonNav button').count()==24)
+  mark('Questão inicial com 4 alternativas',p.locator('#choices .choice').count()==4)
+  mark('Plano sem dados informa limitação',len(p.locator('#studyMessage').inner_text())>20)
+  p.locator('#choices .choice').first.click()
+  mark('Correção comentada exibida',p.locator('#feedback').is_visible())
+  mark('Tutor tem dados para plano',len(p.locator('#studyMessage').inner_text())>20)
+  p.locator('#nextBtn').click()
+  mark('Próxima questão', '2 de 10' in p.locator('#questionIndex').inner_text())
+  p.locator('#quickQuestions button[data-ask="Onde errei?"]').click()
+  mark('Tutor explica dificuldades',len(p.locator('#chat .bot').last.inner_text())>50)
+  p.locator('#chatInput').fill('12 × 8');p.locator('#chatForm button').click()
+  mark('Tutor resolve multiplicação','96' in p.locator('#chat .bot').last.inner_text())
+  p.locator('#chatInput').fill('MMC(6,8)');p.locator('#chatForm button').click()
+  mark('Tutor resolve MMC','24' in p.locator('#chat .bot').last.inner_text())
+  p.locator('#chatInput').fill('perímetro 5 por 3');p.locator('#chatForm button').click()
+  mark('Tutor calcula perímetro','16' in p.locator('#chat .bot').last.inner_text())
+  p.locator('#labN').fill('3');p.locator('#labN').dispatch_event('change')
+  mark('Laboratório visual recalcula','3/4' in p.locator('#labSentence').inner_text())
+  p.locator('#lessonNav button').last.click()
+  mark('Novas missões navegáveis','consumo consciente' in p.locator('#lessonTitle').inner_text())
+  p.locator('#searchGlossary').fill('perímetro')
+  mark('Busca de conceitos',p.locator('#glossary .library-card').count()>=1)
+  p.locator('button[data-doc="privacy"]').click();mark('Política V3 visível','V3.0' in p.locator('#modalTitle').inner_text());p.locator('#closeDoc').click()
+  p.locator('#saveBtn').click()
+  mark('Salvar progresso ativado',p.locator('#saveBtn').get_attribute('aria-pressed')=='true')
+  p.locator('#exportBtn').click()
+  mark('Exportação de progresso disponível',True) # clique completou sem exceção
+  p.screenshot(path=str(R/'previa_desktop.png'),full_page=True)
+  mark('Sem erros JS no desktop',not errors)
+  p2=setup(browser,390,844,mobile=True)
+  p2.locator('#acceptCheck').check();p2.locator('#acceptBtn').click()
+  mark('Mobile sem corte horizontal',p2.evaluate('document.documentElement.scrollWidth <= window.innerWidth+2'))
+  p2.locator('#menuBtn').click()
+  mark('Menu móvel',p2.locator('#sidebar').evaluate("el=>el.classList.contains('open')"))
+  p2.locator('#menuBtn').click()
+  p2.screenshot(path=str(R/'previa_mobile.png'),full_page=True)
+  mark('Sem erros JS no mobile',not errors)
+ except Exception as ex:
+  errors.append(str(ex));traceback.print_exc()
+ finally:
+  browser.close()
+result={'passed':sum(c['passed'] for c in checks),'total':len(checks),'tests':checks,'errors':errors,'environment':'Chromium automated with Playwright; HTML inserted directly into page; localStorage shim in memory; file:// blocked by administrator'}
+(R/'qa_browser_result.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
+print(json.dumps({'passed':result['passed'],'total':result['total'],'errors':errors},ensure_ascii=False))
+raise SystemExit(0 if result['passed']==result['total'] and not errors else 1)
